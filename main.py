@@ -485,7 +485,7 @@ async def start_com(client, message):
     )
 
 
-@app.on_message(filters.group & ~filters.admin)
+@app.on_message(filters.group)
 async def check_bio(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
