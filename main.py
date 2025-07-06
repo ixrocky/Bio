@@ -490,7 +490,7 @@ async def check_bio(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     x=  await app.get_chat_member(message.chat.id, message.from_user.id)
-    if x.status == ChatMemberStatus.ADMINISTRATOR:
+    if x.status in  [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
         return 
     await add_served_chat(chat_id)
     sp = InlineKeyboardMarkup(
