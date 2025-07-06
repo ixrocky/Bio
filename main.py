@@ -489,11 +489,7 @@ async def start_com(client, message):
 async def check_bio(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
-    if getattr(message, "sender_chat", None):
-      return 
     
-    if message.from_user and ( message.from_user.is_self or message.from_user.is_bot):
-      return 
     await add_served_chat(chat_id)
     sp = InlineKeyboardMarkup(
         [
