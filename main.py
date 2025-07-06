@@ -5,7 +5,16 @@ import re, os
 from pyrogram.errors import FloodWait, UserIsBlocked, PeerIdInvalid, MessageNotModified
 
 import asyncio
+import logging
+import sys
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 api_id = os.getenv("API_ID", 0)
 api_hash = os.getenv("API_HASH", "81719734c6a0af15e5d35006655c1f84")
@@ -552,5 +561,5 @@ async def check_bio(client, message):
                 )
             await clear_warning(user_id)
 
-
+logging.getLogger(__name__).info("starting....")
 app.run()
