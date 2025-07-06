@@ -489,7 +489,8 @@ async def start_com(client, message):
 async def check_bio(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
-    
+    if message.chat.is_admin:
+        return
     await add_served_chat(chat_id)
     sp = InlineKeyboardMarkup(
         [
