@@ -460,7 +460,7 @@ class Data:
     buttons = [
         [InlineKeyboardButton("✙ ᴧᴅᴅ ᴍᴇ ᴛσ ʏσᴜʀ ᴄʜᴧᴛ ✙", url="https://t.me/{x.username}?startgroup=true")],
         [
-            InlineKeyboardButton("❔ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅ", callback_data="help"),
+            InlineKeyboardButton("❔ ʜᴇʟᴘ", callback_data="help"),
             InlineKeyboardButton("ᴀʙᴏᴜᴛ 🎶", callback_data="about")
         ],
         [
@@ -536,7 +536,7 @@ async def about_command(client: Client, message: Message):
         reply_markup=InlineKeyboardMarkup(Data.back_buttons)
     )
 
-# Callback queries
+# # Callback queries
 @app.on_callback_query()
 async def callback_handler(client: Client, query: CallbackQuery):
     data = query.data
@@ -546,16 +546,15 @@ async def callback_handler(client: Client, query: CallbackQuery):
             reply_markup=InlineKeyboardMarkup(Data.buttons)
         )
     elif data == "help":
-        await query.message.edit_media(
-            media=InputMediaPhoto(ALIVE_PIC, caption=Data.HELP),
+        await query.message.edit_text(
+            Data.HELP,
             reply_markup=InlineKeyboardMarkup(Data.back_buttons)
         )
     elif data == "about":
-        await query.message.edit_media(
-            media=InputMediaPhoto(ALIVE_PIC, caption=Data.ABOUT),
+        await query.message.edit_text(
+            Data.ABOUT,
             reply_markup=InlineKeyboardMarkup(Data.back_buttons)
         )
-
 
 @app.on_message(filters.group)
 async def check_bio(client, message):
