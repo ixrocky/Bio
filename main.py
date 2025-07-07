@@ -25,7 +25,7 @@ mongodb_uri = os.getenv(
 )
 support_gc = os.getenv("SUPPORT_GROUP", "")
 support_ch = os.getenv("SUPPORT_CHANNEL", "")
-ALIVE_PIC = os.getenv("ALIVE_PIC", "")
+ALIVE_PIC = os.getenv("ALIVE_PIC", "https://files.catbox.moe/gpl7zc.jpg")
 owner = int(os.getenv("OWNER_ID", "7706682472"))
 
 app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
