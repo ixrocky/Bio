@@ -458,7 +458,7 @@ class Data:
     ]
 
     buttons = [
-        [InlineKeyboardButton("✙ ᴧᴅᴅ ᴍᴇ ᴛσ ʏσᴜʀ ᴄʜᴧᴛ ✙", url="https://t.me/{x.username}?startgroup=true")],
+        [InlineKeyboardButton("✙ ᴧᴅᴅ ᴍᴇ ᴛσ ʏσᴜʀ ᴄʜᴧᴛ ✙", url="https://t.me/BioLinkRmBot?startgroup=true")],
         [
             InlineKeyboardButton("❔ ʜᴇʟᴘ", callback_data="help"),
             InlineKeyboardButton("ᴀʙᴏᴜᴛ 🎶", callback_data="about")
