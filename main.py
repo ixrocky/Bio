@@ -1,11 +1,10 @@
-from pyrogram import Client, filters, enums
+import asyncio
+from pyrogram import Client, filters, enums,idle
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
-from pyrogram.types import Message
 from pymongo import AsyncMongoClient
 import re, os
 from pyrogram.errors import FloodWait, UserIsBlocked, PeerIdInvalid, MessageNotModified
 from pyrogram.enums import ChatMemberStatus
-from pyrogram.types import CallbackQuery, InputMediaPhoto
 import asyncio
 import logging
 import sys
@@ -27,7 +26,6 @@ mongodb_uri = os.getenv(
 )
 support_gc = os.getenv("SUPPORT_GROUP", "")
 support_ch = os.getenv("SUPPORT_CHANNEL", "")
-ALIVE_PIC = os.getenv("ALIVE_PIC", "https://files.catbox.moe/gpl7zc.jpg")
 owner = int(os.getenv("OWNER_ID", "7706682472"))
 
 app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
@@ -451,121 +449,43 @@ async def gcast_command(client, message):
     is_broadcasting = False
 
 
-class Data:
-
-    back_buttons = [
-        [InlineKeyboardButton("🏠 ʀᴇᴛᴜʀɴ ʜᴏᴍᴇ 🏠", callback_data="home")]
-    ]
-
-    buttons = [
-        [InlineKeyboardButton("✙ ᴧᴅᴅ ᴍᴇ ᴛσ ʏσᴜʀ ᴄʜᴧᴛ ✙", url="https://t.me/BioLinkRmBot?startgroup=true")],
+@app.on_message(filters.command("start"))
+async def start_com(client, message):
+    x = await client.get_me()
+    start_buttons = InlineKeyboardMarkup(
         [
-            InlineKeyboardButton("❔ ʜᴇʟᴘ", callback_data="help"),
-            InlineKeyboardButton("ᴀʙᴏᴜᴛ 🎶", callback_data="about")
-        ],
-        [
-            InlineKeyboardButton("⚡ ᴜᴘᴅᴀᴛᴇ's", url="https://t.me/SHIVANSH474"),
-            InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ⛈️️", url="https://t.me/MASTIWITHFRIENDSXD")
-        ],  
-    ]
-
-
-    START = """
-**┌────── ˹ ɪɴғᴏʀᴍᴀᴛɪᴏɴ ˼ ⏤͟͟͞͞‌‌‌‌★**
-**┆◍ ʜᴇʏ, ɪ ᴀᴍ : [𝗕ɪᴏ 𝗟ɪɴᴋ 𝗥ᴇsᴛʀɪᴄᴛᴏʀ](https://t.me/BioLinkRmBot)**
-**┆● ɴɪᴄᴇ ᴛᴏ ᴍᴇᴇᴛ ʏᴏᴜ !** 
-**└────────────────────────•**
-**● ɪ ʜᴇʟᴘ ᴘʀᴏᴛᴇᴄᴛ ʏᴏᴜʀ ɢʀᴏᴜᴘ ғʀᴏᴍ ᴜsᴇʀs ᴡɪᴛʜ sᴜsᴘɪᴄɪᴏᴜs ʙɪᴏs (ᴜʀʟs ᴏʀ ᴜsᴇʀɴᴀᴍᴇs).**
-**● ɪ ᴄᴀɴ ᴍᴜᴛᴇ & ᴡᴀʀɴ ᴜsᴇʀs ᴡɪᴛʜ ᴍᴇɴᴛɪᴏɴ.**
-**● ᴜsᴇʀ's ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇ ʜᴀᴠᴇ ʟɪɴᴋs ɪɴ ʙɪᴏ.**
-**•─────────────────────────•**
-**● ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴀɴᴅ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ sᴛᴀʀᴛᴇᴅ!**
-"""
-
-    HELP = """
-**🔧 ᴄᴏᴍᴍᴀɴᴅs :- **
-
-**• `/approve` - ᴀᴘᴘʀᴏᴠᴇ ᴀ ᴜsᴇʀ (ʀᴇᴘʟʏ ᴛᴏ ᴛʜᴇɪʀ ᴍᴇssᴀɢᴇ ᴏʀ ᴜsᴇʀ ɪᴅ)**
-**• `/unapprove` - ʀᴇᴠᴏᴋᴇ ᴀᴘᴘʀᴏᴠᴀʟ (ʀᴇᴘʟʏ ᴛᴏ ᴛʜᴇɪʀ ᴍᴇssᴀɢᴇ ᴏʀ ᴜsᴇʀ ɪᴅ)**
-**• `/approvelist` - ʟɪsᴛ ᴀʟʟ ᴀᴘᴘʀᴏᴠᴇᴅ ᴜsᴇʀs **
-**• `/config` - sᴇᴛ ᴡᴀʀɴɪɴɢs & ᴘᴜɴɪsʜᴍᴇɴᴛ**
-
-**🔧 ᴏᴡɴᴇʀ ᴄᴏᴍᴍᴀɴᴅ :- **
-
-**• `/stats` - sʜᴏᴡ ᴜsᴀɢᴇ sᴛᴀᴛs**
-**• `/gcast` or `/broadcast` - ʙʀᴏᴀᴅᴄᴀsᴛ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ᴜsᴇʀs/ɢʀᴏᴜᴘs**
-**• `/gcastpin` or `/broadcastpin` - ʙʀᴏᴀᴅᴄᴀsᴛ ᴀɴᴅ ᴘɪɴ ᴛʜᴇ ᴍᴇssᴀɢᴇ**
-"""
-
-    ABOUT = """
-**◌ ᴀʙᴏᴜᴛ ᴛʜɪꜱ ʙᴏᴛ** 🌙
-
-**◌ ᴀ ᴛᴇʟᴇɢʀᴀᴍ ᴜsᴇʀ's ʙɪᴏ ʟɪɴᴋ ᴄʜᴇᴄᴋᴇʀ ʙᴏᴛ ғᴏʀ ɢʀᴏᴜᴘs. **
-
-**◌ sᴜᴘᴘᴏʀᴛᴇᴅ :- ᴀᴜᴛʜ ᴜsᴇʀ & ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅ,ᴀᴘᴘʀᴏᴠᴇᴅ/ᴜɴᴀᴘᴘʀᴏᴠᴇᴅ ᴜsᴇʀ , sᴇᴛ ᴡᴀʀɴɪɴɢs & ᴘᴜɴɪsʜᴍᴇɴᴛ ᴇᴛᴄ.**
-
-**◌ ʟᴀɴɢᴜᴀɢᴇ : [ᴘʏᴛʜᴏɴ](https://www.python.org)**
-**◌ ᴘᴏᴡᴇʀᴇᴅ ʙʏ : [sʜɪᴠᴀɴsʜ-xᴅ](https://t.me/SHIVANSH474)**
-**◌ ᴅᴇᴠᴇʟᴏᴘᴇʀ : [sʜɪᴠᴀɴsʜ](https://t.me/SHIVANSHDEVS)**
-"""
-
-# /start command
-@app.on_message(filters.command("start") & filters.private)
-async def start_handler(client: Client, message: Message):
-    await client.send_photo(
-        chat_id=message.chat.id,
-        photo=ALIVE_PIC,
-        caption=Data.START,
-        reply_markup=InlineKeyboardMarkup(Data.buttons)
+            [
+                InlineKeyboardButton(
+                    "➕ Add me to your Group",
+                    url=f"https://t.me/{x.username}?startgroup=true",
+                )
+            ],
+            [
+                InlineKeyboardButton("🚀 𝗨𝗽𝗱𝗮𝘁𝗲", url=support_gc),
+                InlineKeyboardButton("💬 𝗦𝘂𝗽𝗽𝗼𝗿𝘁", url=support_ch),
+            ],
+        ]
     )
 
-# /help command
-@app.on_message(filters.command("help") & filters.private)
-async def help_handler(client: Client, message: Message):
-    await client.send_photo(
-        chat_id=message.chat.id,
-        photo=ALIVE_PIC,
-        caption=Data.HELP,
-        reply_markup=InlineKeyboardMarkup(Data.back_buttons)
+    help_text = (
+        "<b>👋 Hello! I'm a Bio Filter Bot.</b>\n\n"
+        "I help protect your group from users with suspicious bios (URLs or usernames).\n\n"
+        "<b>🔧 Commands:</b>\n"
+        "• <code>/approve</code> - Approve a user (reply to their message or use ID)\n"
+        "• <code>/unapprove</code> - Revoke approval\n"
+        "• <code>/approvelist</code> - List all approved users\n"
+        "• <code>/config</code> - Set warnings & punishment\n"
+        "• <code>/stats</code> - Show usage stats (owner only)\n"
+        "• <code>/gcast</code> or <code>/broadcast</code> - Broadcast a message to all users/groups\n"
+        "• <code>/gcastpin</code> or <code>/broadcastpin</code> - Broadcast and pin the message\n\n"
+        "Add me to your group and make me admin to get started!"
+    )
+    await add_served_user(message.from_user.id)
+    await message.reply_text(
+        help_text, reply_markup=start_buttons, parse_mode=enums.ParseMode.HTML
     )
 
-# /about command
-@app.on_message(filters.command("about") & filters.private)
-async def about_handler(client: Client, message: Message):
-    await client.send_photo(
-        chat_id=message.chat.id,
-        photo=ALIVE_PIC,
-        caption=Data.ABOUT,
-        reply_markup=InlineKeyboardMarkup(Data.back_buttons)
-    )
 
-# Callback query handler
-@app.on_callback_query()
-async def callback_handler(client: Client, query: CallbackQuery):
-    try:
-        data = query.data
-        if data == "home":
-            await query.message.edit_media(
-                media=InputMediaPhoto(media=ALIVE_PIC, caption=Data.START),
-                reply_markup=InlineKeyboardMarkup(Data.buttons)
-            )
-        elif data == "help":
-            await query.message.edit_text(
-                text=Data.HELP,
-                reply_markup=InlineKeyboardMarkup(Data.back_buttons),
-                disable_web_page_preview=True
-            )
-        elif data == "about":
-            await query.message.edit_text(
-                text=Data.ABOUT,
-                reply_markup=InlineKeyboardMarkup(Data.back_buttons),
-                disable_web_page_preview=True
-            )
-        await query.answer()
-    except Exception as e:
-        print(f"Callback error: {e}")
-
-
 @app.on_message(filters.group)
 async def check_bio(client, message):
     chat_id = message.chat.id
@@ -641,4 +561,12 @@ async def check_bio(client, message):
             await clear_warning(user_id)
 
 logging.getLogger(__name__).info("starting....")
-app.run()
+
+async def main():
+    await get_served_chats()
+    await get_served_users()
+    await app.start()
+    await idle()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
