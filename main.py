@@ -19,14 +19,14 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 api_id = os.getenv("API_ID", 0)
 api_hash = os.getenv("API_HASH", "81719734c6a0af15e5d35006655c1f84")
-bot_token = os.getenv("BOT_TOKEN", "8181075654:AAF_UqJxLYDp-odK8-SM-PK8WoTS_yX98cc")
+bot_token = os.getenv("BOT_TOKEN", "")
 mongodb_uri = os.getenv(
     "MONGO_DB_URI",
-    "mongodb+srv://Editguardian:Shiv@cluster0.bznqliz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    "mongodb+srv://SHASHANK:STRANGER@shashank.uj7lold.mongodb.net/?retryWrites=true&w=majority",
 )
 support_gc = os.getenv("SUPPORT_GROUP", "")
 support_ch = os.getenv("SUPPORT_CHANNEL", "")
-owner = int(os.getenv("OWNER_ID", "7706682472"))
+owner = int(os.getenv("OWNER_ID", "6919199044"))
 
 app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
