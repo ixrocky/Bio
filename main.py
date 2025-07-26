@@ -5,6 +5,7 @@ from pymongo import AsyncMongoClient
 import re, os
 from pyrogram.errors import FloodWait, UserIsBlocked, PeerIdInvalid, MessageNotModified
 from pyrogram.enums import ChatMemberStatus
+from pyrogram.types import Message
 from pyrogram.types import CallbackQuery, InputMediaPhoto
 import asyncio
 import logging
